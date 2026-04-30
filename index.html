@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>United HighEyes — AI Surveillance</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁️</text></svg>" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div id="login-screen" class="login-screen">
+  <div class="login-bg">
+    <div class="scan-line"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-eye">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-brand">United HighEyes</div>
+        <div class="login-sub">AI Surveillance System v2.0</div>
+      </div>
+    </div>
+    <div class="login-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="admin" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div id="login-error" class="login-error" style="display:none"></div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">
+        <span>Access System</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="login-footer">Secured by United HighEyes Enterprise Security</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN DASHBOARD
+══════════════════════════════════════ -->
+<div id="app" class="app" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-name">United HighEyes</span>
+          <span class="brand-ver">v2.0 Pro</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="system-status" id="sys-status">
+        <span class="status-dot active"></span>
+        <span>System Online</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-time" id="topbar-time">--:--:--</div>
+      <div class="topbar-alert-badge" id="alert-badge" style="display:none">
+        <span id="alert-badge-count">0</span>
+      </div>
+      <button class="btn-icon" onclick="doLogout()" title="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="overview" onclick="switchTab('overview', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="nav-item" data-tab="live" onclick="switchTab('live', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+        <span>Live Feed</span>
+        <span class="nav-badge" id="live-badge">0</span>
+      </button>
+      <button class="nav-item" data-tab="alerts" onclick="switchTab('alerts', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span>Alerts</span>
+        <span class="nav-badge red" id="alerts-nav-badge" style="display:none">!</span>
+      </button>
+      <button class="nav-item" data-tab="cameras" onclick="switchTab('cameras', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <span>Cameras</span>
+      </button>
+      <button class="nav-item" data-tab="analytics" onclick="switchTab('analytics', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Analytics</span>
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="switchTab('settings', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="ai-status">
+        <div class="ai-dot" id="ai-dot"></div>
+        <span>AI Engine</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- ── OVERVIEW TAB ── -->
+    <section class="tab-pane active" id="tab-overview">
+      <div class="page-title">
+        <h1>Security Overview</h1>
+        <span class="page-date" id="page-date"></span>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-tile">
+          <div class="stat-tile-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <div class="stat-tile-body">
+            <div class="stat-tile-val" id="s-cameras">0</div>
+            <div class="stat-tile-label">Active Cameras</div>
+          </div>
+          <div class="stat-tile-trend green">LIVE</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+          <div class="stat-tile-body">
+            <div class="stat-tile-val" id="s-alerts-today">0</div>
+            <div class="stat-tile-label">Alerts Today</div>
+          </div>
+          <div class="stat-tile-trend red" id="s-alerts-trend">--</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div class="stat-tile-body">
+            <div class="stat-tile-val" id="s-frames">0</div>
+            <div class="stat-tile-label">Frames Analyzed</div>
+          </div>
+          <div class="stat-tile-trend amber" id="s-ai-speed">--ms</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="stat-tile-body">
+            <div class="stat-tile-val" id="s-total-alerts">0</div>
+            <div class="stat-tile-label">Total Threats</div>
+          </div>
+          <div class="stat-tile-trend purple">ALL TIME</div>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <!-- Recent alerts feed -->
+        <div class="card">
+          <div class="card-head">
+            <span>Recent Threat Alerts</span>
+            <button class="btn-text" onclick="switchTab('alerts', document.querySelector('[data-tab=alerts]'))">View All</button>
+          </div>
+          <div id="recent-alerts-list" class="alert-feed">
+            <div class="feed-empty">No threats detected. System monitoring...</div>
+          </div>
+        </div>
+
+        <!-- Threat breakdown donut -->
+        <div class="card">
+          <div class="card-head"><span>Threat Breakdown</span></div>
+          <div class="threat-breakdown" id="threat-breakdown">
+            <div class="feed-empty">Monitoring...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── LIVE FEED TAB ── -->
+    <section class="tab-pane" id="tab-live">
+      <div class="page-title">
+        <h1>Live Surveillance Feed</h1>
+        <div class="live-controls">
+          <button class="btn-primary" onclick="addDemoCamera()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Camera
+          </button>
+          <button class="btn-outline" onclick="uploadFrame()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Frame
+          </button>
+        </div>
+      </div>
+
+      <!-- Hidden file input for frame upload -->
+      <input type="file" id="frame-upload-input" accept="image/*" style="display:none" onchange="handleFrameUpload(event)" />
+
+      <div class="camera-grid" id="camera-grid">
+        <div class="camera-placeholder" onclick="addDemoCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="48" height="48"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <span>Click to add a camera feed</span>
+          <small>Or upload an image frame for AI analysis</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ALERTS TAB ── -->
+    <section class="tab-pane" id="tab-alerts">
+      <div class="page-title">
+        <h1>Threat Alert Log</h1>
+        <div class="page-actions">
+          <select class="select-filter" id="alert-filter" onchange="filterAlerts()">
+            <option value="">All Threats</option>
+            <option value="weapon_detected">Weapon Detected</option>
+            <option value="mask_suspicious">Suspicious Mask</option>
+            <option value="intrusion">Intrusion</option>
+            <option value="crowd_panic">Crowd Panic</option>
+            <option value="loitering">Loitering</option>
+            <option value="fire_smoke">Fire / Smoke</option>
+            <option value="vandalism">Vandalism</option>
+            <option value="abandoned_object">Abandoned Object</option>
+          </select>
+          <button class="btn-outline" onclick="exportAlerts()">Export CSV</button>
+        </div>
+      </div>
+      <div class="card" style="overflow:hidden">
+        <div class="table-wrap">
+          <table class="data-table" id="alerts-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Camera</th>
+                <th>Threat Type</th>
+                <th>Confidence</th>
+                <th>Description</th>
+                <th>Snapshot</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-tbody">
+              <tr><td colspan="7" class="table-empty">No alerts recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CAMERAS TAB ── -->
+    <section class="tab-pane" id="tab-cameras">
+      <div class="page-title">
+        <h1>Camera Management</h1>
+        <button class="btn-primary" onclick="showAddCameraModal()">+ Add Camera</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Name</th><th>Location</th><th>Status</th><th>Last Frame</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="cameras-tbody">
+              <tr><td colspan="5" class="table-empty">No cameras registered.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ANALYTICS TAB ── -->
+    <section class="tab-pane" id="tab-analytics">
+      <div class="page-title"><h1>Analytics & Intelligence</h1></div>
+      <div class="analytics-grid">
+        <div class="card">
+          <div class="card-head"><span>7-Day Alert Trend</span></div>
+          <div class="chart-area" id="trend-chart"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>Top Threat Cameras</span></div>
+          <div id="top-cameras-list" class="top-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS TAB ── -->
+    <section class="tab-pane" id="tab-settings">
+      <div class="page-title"><h1>System Settings</h1></div>
+      <div class="settings-grid">
+        <div class="card">
+          <div class="card-head"><span>AI Detection Settings</span></div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Threat Confidence Threshold</div>
+                <div class="setting-desc">Minimum confidence to trigger an alert (0.0 – 1.0)</div>
+              </div>
+              <input type="number" id="set-threshold" class="setting-input" min="0" max="1" step="0.05" value="0.75" />
+            </div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Alert Cooldown (seconds)</div>
+                <div class="setting-desc">Min time between alerts from same camera</div>
+              </div>
+              <input type="number" id="set-cooldown" class="setting-input" min="5" max="300" value="30" />
+            </div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Analysis Mode</div>
+                <div class="setting-desc">How often frames are sent for AI analysis</div>
+              </div>
+              <select class="setting-input" id="set-mode">
+                <option value="realtime">Real-time (every frame)</option>
+                <option value="smart" selected>Smart (on motion)</option>
+                <option value="manual">Manual only</option>
+              </select>
+            </div>
+            <button class="btn-primary" style="margin-top:1rem" onclick="saveSettings()">Save Settings</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>Telegram Alert Config</span></div>
+          <div class="settings-body">
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Bot Token</div>
+                <div class="setting-desc">From @BotFather on Telegram</div>
+              </div>
+              <input type="password" class="setting-input" placeholder="Set in .env file" disabled />
+            </div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Chat ID</div>
+                <div class="setting-desc">Your Telegram chat or group ID</div>
+              </div>
+              <input type="text" class="setting-input" placeholder="Set in .env file" disabled />
+            </div>
+            <div class="setting-info">Configure Telegram credentials in your <code>.env</code> file and restart the server.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>System Information</span></div>
+          <div class="settings-body" id="sys-info">
+            <div class="info-row"><span>System</span><span>United HighEyes v2.0</span></div>
+            <div class="info-row"><span>AI Engine</span><span>Claude claude-opus-4-5 Vision</span></div>
+            <div class="info-row"><span>Alert Channel</span><span>Telegram Bot</span></div>
+            <div class="info-row"><span>Database</span><span>SQLite (WAL mode)</span></div>
+            <div class="info-row"><span>Uptime</span><span id="sys-uptime">--</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Threat Alert Modal (popup on detection) -->
+<div id="threat-modal" class="modal-overlay" style="display:none" onclick="closeThreatModal(event)">
+  <div class="modal threat-modal">
+    <div class="modal-threat-header">
+      <div class="threat-modal-icon" id="tm-icon">🔴</div>
+      <div>
+        <div class="threat-modal-title" id="tm-title">THREAT DETECTED</div>
+        <div class="threat-modal-sub" id="tm-sub">weapon_detected</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('threat-modal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="threat-info-grid">
+        <div class="threat-info-item"><span>Camera</span><strong id="tm-camera">--</strong></div>
+        <div class="threat-info-item"><span>Confidence</span><strong id="tm-confidence">--</strong></div>
+        <div class="threat-info-item"><span>Time</span><strong id="tm-time">--</strong></div>
+        <div class="threat-info-item"><span>Persons</span><strong id="tm-persons">--</strong></div>
+      </div>
+      <div class="threat-desc" id="tm-desc"></div>
+      <div class="threat-rec" id="tm-rec"></div>
+      <div id="tm-snapshot-wrap" style="display:none">
+        <img id="tm-snapshot" class="threat-snapshot" src="" alt="Threat snapshot" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" onclick="acknowledgeFromModal()">Acknowledge Alert</button>
+      <button class="btn-outline" onclick="document.getElementById('threat-modal').style.display='none'">Dismiss</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Camera Modal -->
+<div id="add-camera-modal" class="modal-overlay" style="display:none" onclick="closeAddCamera(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span>Add Camera</span>
+      <button class="modal-close" onclick="document.getElementById('add-camera-modal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Camera Name *</label><input type="text" id="cam-name" placeholder="Main Entrance" /></div>
+      <div class="form-group"><label>Location</label><input type="text" id="cam-location" placeholder="Ground Floor - Lobby" /></div>
+      <div class="form-group"><label>Stream URL (optional)</label><input type="text" id="cam-url" placeholder="rtsp://..." /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="addCamera()">Add Camera</button>
+      <button class="btn-outline" onclick="document.getElementById('add-camera-modal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notifications container -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
