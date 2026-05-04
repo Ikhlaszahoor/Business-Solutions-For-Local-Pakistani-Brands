@@ -1,6 +1,6 @@
-# 👁️ United HighEyes — Real-Time Edge AI Surveillance
+# United HighEyes — Real-Time Edge AI Surveillance
 
-> **Enterprise-grade AI surveillance system powered by Claude Vision API**
+> **Enterprise-grade AI surveillance system powered by THE UNITED HIGHES**
 > Detects threats, weapons, suspicious behavior in real-time with Telegram alerts.
 
 ![United HighEyes](https://img.shields.io/badge/United%20HighEyes-v2.0%20Pro-blue?style=for-the-badge)
@@ -48,7 +48,7 @@
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/united-higheyes.git
+git clone https://github.com/Ikhlaszahoor/united-higheyes.git
 cd united-higheyes
 ```
 
